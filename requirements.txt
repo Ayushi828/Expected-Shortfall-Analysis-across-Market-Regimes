@@ -1,0 +1,9 @@
+numpy
+pandas
+matplotlib
+ipykernel
+jupyter
+datetime
+yfinance
+setuptools
+scipy

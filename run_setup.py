@@ -1,6 +1,6 @@
 from setuptools import setup, find_packages
 
-setup(name = "Tail-Risk-and-Regime-Shift-Analysis-in-Financial-Portfolios", version = " 0.1", packages = find_packages())
+setup(name = "Expected-Shortfall-Analysis-across-Market-Regimes", version = " 0.1", packages = find_packages())
 
 
 

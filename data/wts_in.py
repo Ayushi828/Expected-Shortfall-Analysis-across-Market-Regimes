@@ -1,10 +1,18 @@
+import numpy as np
+weigh = []
 
-weight = []
+def wt_distribution(tickers):
+    print("\n",'-'*10, "\tFor weight of portfolio", '-'*10)
 
-def wt_distribution():
-   
-    for w in range(1,11):
-        w = float(input(f"weight for stock{w} : \t" ))
-        weight.append(w)
+    print("\n a) Equally distributed \n b) Insert weight of each stock \n")
+    ch = str(input("choose the option for weight distribution: "))
 
-    return weight
+    if ch == 'a':
+        weight = np.array([1/len(tickers)] * len(tickers))
+
+    else: 
+        for w in range(1,11):
+            w = float(input(f"weight for stock{w} : \t" ))
+            weigh.append(w)
+
+    return weigh

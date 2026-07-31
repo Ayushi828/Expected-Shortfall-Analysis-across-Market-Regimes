@@ -1,12 +1,13 @@
 
-tickers = [ "HDFCBANK.NS",
-            "FEDERALBNK.NS", 
-            "SBIN.NS",
-            "BANKBARODA.NS",
-            "CHOLAFIN.NS",
-            "SUNDARMFIN.NS",
-            "CRISIL.NS",
-            "JMFINANCIL.NS",
-            "CANFINHOME.NS",
-            "BAJAJFINSV.NS"
+tickers = ["HDFCBANK.NS", 
+           "SBIN.NS",
+           "BANKBARODA.NS",
+           "PNB.NS",
+           "ICICIBANK.NS",
+           "NIFTY_GSEC_10YR.NS",
+           "GILT5YBEES.NS",
+           "GILT10YBEES.NS",
+           "LIQUIDBEES.NS",
+           "NIFTY1.NS",
+           "BHARATBOND.NS
           ]

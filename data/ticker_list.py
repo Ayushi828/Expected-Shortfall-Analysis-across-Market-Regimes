@@ -9,5 +9,5 @@ tickers = ["HDFCBANK.NS",
            "GILT10YBEES.NS",
            "LIQUIDBEES.NS",
            "NIFTY1.NS",
-           "BHARATBOND.NS
+           "BHARATBOND.NS"
           ]

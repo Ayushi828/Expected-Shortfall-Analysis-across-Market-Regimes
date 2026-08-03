@@ -71,5 +71,15 @@ for reg, date in regimes.items():
    
     results.append([reg, start, end, VAR, CVAR])
 
-#
+#    ----MAKING A DATAFRAME OF ALL THE VALUES----
+print("\n \n")
+Regime_Risk_df = pd.DataFrame(results, columns=["Regimes",
+                                                "Start_date",
+                                                "End_date",
+                                                "Value_at_Risk",
+                                                "Conditional_VaR"
+                                                ])
+
+print(Regime_Risk_df)
+
 

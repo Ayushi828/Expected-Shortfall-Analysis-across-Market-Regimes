@@ -33,7 +33,13 @@ for w, t in zip(weights, tickers):
 
 
 #  ----REGIMES----
-regimes = {" Pre_GlobalFinCrisis      " : ("2004-01-01", "2007-12-31"),
+regimes = {
+           " Post_Liberalization_Boom " : ("1996-01-01", "1997-12-31"),
+           " Asian_Crisis_Impact      " : ("1998-01-01", "1998-12-31"),
+           " DotCom_Pre_Bubble        " : ("1999-01-01", "2000-02-29"),
+           " DotCom_Crash_Bear_Market " : ("2000-03-01", "2001-09-30"),
+           " Post_DotCom_Recovery     " : ("2001-10-01", "2003-12-31"),
+           " Pre_GlobalFinCrisis      " : ("2004-01-01", "2007-12-31"),
            " Global_Financial_Crisis  " : ("2008-01-01", "2009-12-31"),
            " Post_GlobalFinCrisis     " : ("2010-01-01", "2019-12-31"),
            " COVID_Crash              " : ("2020-02-01", "2020-04-30"),
@@ -81,5 +87,28 @@ Regime_Risk_df = pd.DataFrame(results, columns=["Regimes",
                                                 ])
 
 print(Regime_Risk_df)
+
+
+#  --VISUALISATION--
+
+#  A) BAR CHART COMPARISON OF VaR vs CVaR
+
+x = np.arange(len(Regime_Risk_df["Regimes"]))
+y = Regime_Risk_df["Value_at_Risk"]
+z = Regime_Risk_df["Conditional_VaR"]
+plt.figure(figsize=(10, 5))
+width = 0.35
+plt.bar(x - width/2 , z, width, label = "CVaR", color = "#35509a")
+plt.bar(x + width/2, y, width, label = "VaR", color = "#55cb9c")
+plt.xlabel("Regimes")
+plt.xticks(x,Regime_Risk_df["Regimes"], rotation = 75, ha = "right")
+plt.ylabel("Risk in Rupees")
+plt.title("VaR vs CVaR across Regimes")
+plt.grid(axis = "y")
+plt.legend()
+
+
+#  B) HISTOGRAM FOR EACH REGIME WITH VaR AND CVaR 
+
 
 

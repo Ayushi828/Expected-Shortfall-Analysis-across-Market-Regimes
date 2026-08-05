@@ -1,12 +1,17 @@
 import sys
 import os
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+current_dir = os.path.dirname(os.path.abspath(__file__))
+
+
 
 #  ----IMPORT REQUIRED LIBRARIES----
 import pandas as pd
 import numpy as np
 import datetime as dt
 import scipy.stats as norm
+import matplotlib.pyplot as plt
+
 
 
 #  ----IMPORT THE FUNCTION----
@@ -17,6 +22,8 @@ from src.returns import (cal_returns)
 from src.hist_return import hist_return
 from src.var_parametric import cal_var_s
 from src.cvar_parametric import cal_cvar_p
+from src.x_day import xday_return_calc
+
 
 
 #  ----INPUTS----
@@ -25,11 +32,13 @@ confidence = float(input("Enter the confidence for both VaR and CVaR calculation
 days = int(input("Enter the time window for calculation: "))
 
 
+
 #  ----WEIGHT DISTRIBUTION OF PORTFOLIO---- 
 weights = wt_distribution(tickers)
 print("\n\tWEIGHT DISTRIBUTION PER STOCK\n")
 for w, t in zip(weights, tickers):
     print(f"{t}:\t \t {w}")
+
 
 
 #  ----REGIMES----
@@ -49,9 +58,10 @@ regimes = {
           }
 
 
+
 #  ----CALLING THE FUNCTIONS----
 results = []
-
+oth_val = []
 for reg, date in regimes.items():
 
     start = dt.datetime.strptime(date[0], "%Y-%m-%d")
@@ -66,6 +76,11 @@ for reg, date in regimes.items():
     # CALCULATING HISTORICAL RETURN I.E. RETURN OF ENTIRE PORTFOLIO HISTORICALLY
     historical_returns = hist_return(log_returns, weights)
 
+    
+    # CALCULATING X-DAY RETURNS USING HISTORICAL RETURNS
+    xday_rtrn = xday_return_calc(historical_returns, days)
+    xday_portf = xday_rtrn * portfolio
+
     # CALCULATING VALUE_AT_RISK THROUGH PARAMETRIC METHOD 
     P_VAR = cal_var_s(returns = log_returns, cl= confidence, w= weights, d= days, value= portfolio)
     VAR = round(float(np.squeeze(P_VAR)), 2)
@@ -76,6 +91,8 @@ for reg, date in regimes.items():
 
    
     results.append([reg, start, end, VAR, CVAR])
+    oth_val.append([reg, VAR, CVAR, xday_portf])
+    
 
 #    ----MAKING A DATAFRAME OF ALL THE VALUES----
 print("\n \n")
@@ -88,27 +105,74 @@ Regime_Risk_df = pd.DataFrame(results, columns=["Regimes",
 
 print(Regime_Risk_df)
 
+Visual_df = pd.DataFrame(oth_val, columns= ["Regimes",
+                                            "Value-at-Risk",
+                                            "Conditional-VaR",
+                                            "XDAY_RETURNS"
+                                            ])
 
-#  --VISUALISATION--
+
+
+#    ----VISUALISATION----
 
 #  A) BAR CHART COMPARISON OF VaR vs CVaR
 
 x = np.arange(len(Regime_Risk_df["Regimes"]))
 y = Regime_Risk_df["Value_at_Risk"]
 z = Regime_Risk_df["Conditional_VaR"]
-plt.figure(figsize=(10, 5))
+plt.figure(figsize=(10, 8))
 width = 0.35
 plt.bar(x - width/2 , z, width, label = "CVaR", color = "#35509a")
 plt.bar(x + width/2, y, width, label = "VaR", color = "#55cb9c")
 plt.xlabel("Regimes")
-plt.xticks(x,Regime_Risk_df["Regimes"], rotation = 75, ha = "right")
+plt.xticks(x,Regime_Risk_df["Regimes"], rotation = 50, ha = "right")
 plt.ylabel("Risk in Rupees")
 plt.title("VaR vs CVaR across Regimes")
 plt.grid(axis = "y")
 plt.legend()
+plt.savefig(os.path.join(current_dir, "Bar_Comparison.png"), dpi = 300, bbox_inches = "tight")
 
 
-#  B) HISTOGRAM FOR EACH REGIME WITH VaR AND CVaR 
+#  B) HISTOGRAM FOR EACH REGIME WITH VaR AND CVaR VISUALs
+
+
+fig, axes = plt.subplots(nrows=6, ncols=2, figsize=(20, 30))
+
+axes = axes.flatten()
+
+for ax, (_, row) in zip(axes, Visual_df.iterrows()):
+
+    # Historical return distribution for this regime
+    returns = np.asarray(row["XDAY_RETURNS"]).flatten()
+
+    # Risk measures
+    var = row["Value-at-Risk"]
+    cvar = row["Conditional-VaR"]
+
+    # Histogram
+    ax.hist(returns, bins=100, color="#1789CC", alpha=0.7, density= "True")
+
+    # VaR
+    ax.axvline(-var, color="#f92808", linestyle="--", linewidth=2, label="VaR")
+
+    # CVaR
+    ax.axvline(-cvar, color="#1bcc15", linestyle="-", linewidth=2, label="CVaR")
+
+    ax.set_title(row["Regimes"], fontsize=10)
+    ax.set_xlabel(f"{days} Days Portfolio Return")
+    ax.set_ylabel("Frequency")
+    ax.grid(axis="y", alpha=0.3)
+
+    # One legend per subplot
+    ax.legend(fontsize=5)
+
+plt.suptitle(
+    "VAR and CVAR IN DIFFERENT REGIMES", fontsize=12, fontweight="bold")
+
+plt.tight_layout(rect=[0, 0, 1, 0.97])
+plt.savefig(os.path.join(current_dir, "VaR_CVaR_Histogram.png"), dpi = 300, bbox_inches = "tight")
+
+plt.show()
 
 
 

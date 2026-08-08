@@ -98,7 +98,7 @@ The code is interactive at runtime and prompts the user for the following inputs
 
 ## VaR vs CVaR Comparison Chart
 
-![Comparison between each regimes](notebook/Bar_comparison.png)
+![Comparison between each regimes](notebook/Bar_Comparison.png)
 ---
 
 ## Returns Across 12 Market Regimes
